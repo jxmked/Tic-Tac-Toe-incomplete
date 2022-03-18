@@ -5,7 +5,7 @@ const Rules = (function() {
     let moved;
     let strike; //Straight win
     let className = "block"; //Class Attribute name
-    let hTitle = "highlighted"; //Block's title if straight
+    let hTitle = "highlighted";
     
     
     //Straight patterns
@@ -15,48 +15,47 @@ const Rules = (function() {
     ];
     
     //Highlight the straight(s)
-    const Roll = (function() {
-        function run(arr) {
-            let blocks = document.getElementsByClassName(className);
-            arr.forEach((val, i) => {
-                val.forEach((pos, i) => {
+    const Roll = function(arr) {
+        let blocks = document.getElementsByClassName(className);
+        
+        arr.forEach((val, i) => {
+           val.forEach((pos, i) => {
                     blocks[pos].setAttribute("title", hTitle);
                 });
             });
             return this;
         }
-        return run;
-    }());
     
     //Check for straights
-    const Check = (function() {
-        function run(player, index) {
-            let arr = [];
+    const Check = function(player, index) {
+        let arr = [];
             
-            patterns.forEach((pattern, i) => {
+        patterns.forEach((pattern, i) => {
                 
-                if (pattern.indexOf(index) == -1 && index) return [];
+            if (pattern.indexOf(index) == -1 && index) return [];
                 
-                let res = pattern.split("").filter((pos, i) => {
-                    try {
-                        let title = ("undefined" != typeof moved[parseInt(pos)]) ? moved[parseInt(pos)] : "";
+            let res = pattern.split("").filter((pos, i) => {
+                try {
+                    let title = ""
+                    
+                    if("undefined" != typeof moved[parseInt(pos)]){
+                        title = moved[parseInt(pos)]
+                    }
                         
-                        return (player == title);
-                    }
-                    catch (e) {
-                        return false;
-                    }
-                });
-                
-                if (res.length == strike) {
-                    arr.push(res);
+                    return (player == title);
+                }
+                catch (e) {
+                    return false;
                 }
             });
-            
-            return arr;
-        }
-        return run;
-    }());
+                
+            if (res.length == strike) {
+                arr.push(res);
+            }
+        });
+        
+        return arr;
+    }
     
     
     //Constructor

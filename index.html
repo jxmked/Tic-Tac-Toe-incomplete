@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="eng">
+<meta name="viewport" content="initial-scale=1, width=320,user-scalable=no">
+<head>
+    <title>Tic Tac Toe</title>
+    <style type="text/css">
+        body {
+            width: 320px;
+            height: auto;
+            background-color: #fff;
+            font-size: 12px;
+            margin: auto;
+            color: #4f4f4f;
+            display: block;
+            white-space: nowrap;
+        }
+        .nav {
+            text-align: center;
+            border-radius: 0 0 15px 15px;
+            opacity: 1.0;
+            margin: 0px auto 0 auto;
+            font-family: sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 3px;
+            z-index: 950;
+            width: 320px;
+            background-color: rgba(50, 198, 255, 0.6);
+            border: 1px inset #fff;
+            box-shadow: 3px 2px 3px rgba(0, 0, 0, 0.2), -3px 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        .nav>h4 {
+            margin: 5px;
+            letter-spacing: 3px;
+            font-weight: 700;
+            font-family: sans-serif;
+            color: #4f4f4f;
+            text-shadow: 3px -2px 5px rgba(219, 219, 90, 0.6);
+        }
+        table, tr, td {
+            border: 1px solid #000;
+            border-collapse: collapse;
+        }
+        table {
+            width: 300px;
+            height: 300px;
+            margin: 5px auto 5px auto;
+        }
+        .block {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            margin: auto;
+        }
+        .block:hover {
+            background-color: #e1e1e1;
+        }
+        .block[title=user] {
+            background-color: #00b7ff;
+        }
+        .block[title=enemy] {
+            background-color: #af00b7;
+        }
+        .block[title=highlighted] {
+            background-color: #ffb700;
+        }
+        .btn {
+            border: 1px solid #e0e0e0;
+            background-color: #e5e5e5;
+            font-weight: 500;
+            color: #2f2f2f;
+            border-radius: 7px;
+            font-size: 20px;
+            padding: 8px;
+            height: auto;
+            text-align: center;
+            content: " ";
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <h4>Tic Tac Toe</h4>
+    </div>
+    <div>
+        <table id="main-board"></table>
+    </div>
+    <div>
+        <button id="reset" class="btn">Reset</button>
+    </div>
+</body>
+<script src="helpers.js"></script>
+<script src="GameObject.js"></script>
+<script src="Rules.js"></script>
+<script src="AI.js"></script>
+<!--
+  <script src="Tool.js"></script> -->
+<script type="text/javascript">
+    //Defaults
+    let strike = 3; //Winning straight
+    let player = "user"; //User's index
+    let enemy = "enemy"; //Enemy's index
+    let boardSize = 3; //Board's dimension size
+    
+    //Global Varuables
+    let go; //Game Object
+    let gameResult = false;
+    
+    document.body.onload = () => {
+        //   xTool.back.run();
+        go = GameObject(boardSize, strike);
+        
+        let lever = true;
+        click(".block", (e, i) => {
+            if (!gameResult && lever) {
+                if (go.turn("user", i)) {
+                    lever = false;
+                    
+                    if (roll("user", i)) {
+                        gameResult = "user";
+                        delay(500, Status);
+                        return;
+                    }
+                    
+                    delay(320, () => {
+                        let ai = AI(go.move.getMoves(), go.move.getMoved(), strike);
+                        
+                        if (go.turn("enemy", ai)) {
+                            lever = true;
+                            
+                            if (roll("enemy", ai)) {
+                                gameResult = "enemy";
+                                delay(500, Status);
+                            }
+                        }
+                    });
+                }
+                
+                if (go.move.getMoves().length == 0) {
+                    gameResult = "draw";
+                    delay(400, Status);
+                }
+            }
+        });
+        
+        setClickEvent("#reset", () => {
+            go.reset();
+            gameResult = false;
+            lever = true;
+        });
+    };
+    
+    
+    function roll(player, pos) {
+        let rule = new Rules(go.move.getMoved(), strike);
+        let res = rule.check(player, pos);
+        
+        if (res.length != 0) {
+            delay(200, () => {
+                rule.highlight(res);
+            });
+            return true;
+        }
+    }
+    /**** This function is for a test*****/
+    function Status() {
+        switch (gameResult) {
+            case "draw":
+                alert("Draw!");
+                break;
+            case "enemy":
+                alert("Enemy's Win");
+                break;
+            case "user":
+                alert("You Win");
+                break;
+        }
+    }
+</script>
+</html>

@@ -9,7 +9,8 @@ const Rules = (function() {
     
     
     //Straight patterns
-    const patterns = ["012", "345", "678",
+    const patterns = [
+        "012", "345", "678",
         "036", "147", "258",
         "048", "246"
     ];

@@ -4,7 +4,7 @@ const Board = (function() {
     let boardSize;
     let table = document.getElementById("main-board");
     let className = "block";
-    
+     
     //Constructor 
     return function(size) {
         boardSize = size;
